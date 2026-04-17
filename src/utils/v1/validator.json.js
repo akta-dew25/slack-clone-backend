@@ -27,12 +27,8 @@ export const orgUserValidation = {
       email: {
         mandatory: true,
         type: "email",
-        regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
       },
       password: {
-        type: "string",
-        min: 6,
-        max: 10,
         regex:
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       },
