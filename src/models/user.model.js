@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );
@@ -55,10 +59,9 @@ const userSchema = new mongoose.Schema(
 // userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre("save", async function () {
-  if (this.isModified("password"));
-  this.password = await bcrypt.hash(this.password, 10);
-
-  // next();
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 });
 
 userSchema.methods.comparePassword = function (plainPassword) {

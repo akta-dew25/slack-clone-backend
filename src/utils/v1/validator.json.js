@@ -23,6 +23,7 @@ export const orgUserValidation = {
       name: {
         mandatory: true,
         type: "string",
+        // min: 3,
       },
       email: {
         mandatory: true,
@@ -33,5 +34,14 @@ export const orgUserValidation = {
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       },
     },
+  },
+};
+export const userLoginValidation = {
+  email: {
+    mandatory: true,
+    type: "email",
+  },
+  password: {
+    mandatory: true,
   },
 };
