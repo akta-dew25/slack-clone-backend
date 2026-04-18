@@ -1,14 +1,18 @@
 import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
 import { generateAccessToken, generateRefreshToken } from "./token.js";
-import bcrypt from "bcryptjs";
 
-const authUtils = async (data) => {
+const loginUtils = async (data) => {
   try {
     await connectDB();
     const { email, password } = data;
 
-    const user = await User.findOne({ email });
+    // findone. = first object condition,second object same ,
+
+    const user = await User.findOne(
+      { email },
+      { _id: 1, organizationId: 1, password: 1 },
+    );
     if (!user) {
       return {
         statusCode: 400,
@@ -26,8 +30,16 @@ const authUtils = async (data) => {
     }
 
     // generate token
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    const accessToken = generateAccessToken(
+      { userId: user._id, orgId: user.organizationId },
+      process.env.ACCESS_TOKEN_SECRET,
+      "1h",
+    );
+    const refreshToken = generateRefreshToken(
+      { userId: user._id, orgId: user.organizationId },
+      process.env.REFRESH_TOKEN_SECRET,
+      "7d",
+    );
     // save refresh token in db
     user.refreshToken = refreshToken;
     await user.save();
@@ -39,7 +51,7 @@ const authUtils = async (data) => {
       message: "Login successful",
       data: {
         id: user._id,
-        username: user.name,
+        orgId: user.organizationId,
       },
       accessToken,
       refreshToken,
@@ -53,4 +65,4 @@ const authUtils = async (data) => {
   }
 };
 
-export default authUtils;
+export default loginUtils;

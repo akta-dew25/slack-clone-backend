@@ -6,7 +6,7 @@ import authController from "../../controllers/v1/auth.controller.js";
 const authRouter = express.Router();
 
 authRouter.post(
-  "/user/login",
+  "/login",
   validatePayload({ rule: userLoginValidation }),
   authController,
 );
