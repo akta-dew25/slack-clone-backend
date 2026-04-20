@@ -50,7 +50,7 @@ const loginUtils = async (data) => {
       statusCode: 200,
       message: "Login successful",
       data: {
-        id: user._id,
+        userId: user._id,
         orgId: user.organizationId,
       },
       accessToken,
