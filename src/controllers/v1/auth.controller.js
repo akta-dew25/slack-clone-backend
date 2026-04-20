@@ -1,8 +1,8 @@
-import authUtils from "../../utils/v1/auth.utils.js";
+import loginUtils from "../../utils/v1/auth.utils.js";
 
 const authController = async (req, res) => {
   try {
-    const { statusCode, ...response } = await authUtils(req.body);
+    const { statusCode, ...response } = await loginUtils(req.body);
     res.status(statusCode).json(response);
   } catch (error) {
     res.status(500).json({
