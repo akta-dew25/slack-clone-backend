@@ -45,3 +45,21 @@ export const userLoginValidation = {
     mandatory: true,
   },
 };
+
+export const adduserValidation = {
+  organizationId: { type: "string" },
+  name: {
+    mandatory: true,
+    type: "string",
+    // min: 3,
+  },
+  email: {
+    mandatory: true,
+    type: "email",
+  },
+  password: {
+    // mandatory: true,
+    // regex:
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  },
+};

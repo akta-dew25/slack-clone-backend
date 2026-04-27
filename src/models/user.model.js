@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      required: true,
+      // required: true,
     },
 
     name: {
@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
+    },
+    role: {
+      type: Object,
+      // required: true,
     },
 
     avatar: {
@@ -47,10 +51,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
+    // refreshToken: {
+    //   type: String,
+    //   default: null,
+    // },
   },
   { timestamps: true },
 );
@@ -60,12 +64,13 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
+    this.password = bcrypt.hash(this.password, 10);
   }
 });
 
-userSchema.methods.comparePassword = function (plainPassword) {
-  return bcrypt.compare(plainPassword, this.password);
+userSchema.methods.comparePassword = async function (plainPassword) {
+  let comparePasswrd = await bcrypt.compare(plainPassword, this.password);
+  return comparePasswrd;
 };
 
 const User = mongoose.model("User", userSchema);
