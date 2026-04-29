@@ -31,7 +31,7 @@ export const authRegisterUtils = async (data) => {
       } = await createUserUtils({
         ...user,
         role: { name: "Admin", permissions: "*" },
-        organizationId: organization._id,
+        orgId: organization._id,
       });
 
       if (statusCode === 201) {
@@ -39,7 +39,11 @@ export const authRegisterUtils = async (data) => {
           statusCode: 201,
           message: "Organization and User created successfully",
           org: organization,
-          user: _user,
+          user: {
+            name: _user.name,
+            email: _user.email,
+            orgId: _user.orgId,
+          },
         };
       } else {
         return {
@@ -74,7 +78,7 @@ export const loginUtils = async (data) => {
     console.log({ data });
     const user = await User.findOne(
       { email },
-      { _id: 1, organizationId: 1, password: 1, role: 1 },
+      { _id: 1, orgId: 1, password: 1, role: 1 },
     );
     if (!user) {
       return {
@@ -92,16 +96,14 @@ export const loginUtils = async (data) => {
       };
     }
 
-    console.log(user, "user");
-
     // generate token
     const accessToken = generateAccessToken(
-      { userId: user._id, orgId: user.organizationId, role: user.role },
+      { userId: user._id, orgId: user.orgId, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
       "1h",
     );
     const refreshToken = generateRefreshToken(
-      { userId: user._id, orgId: user.organizationId, role: user.role },
+      { userId: user._id, orgId: user.orgId, role: user.role },
       process.env.REFRESH_TOKEN_SECRET,
       "7d",
     );
@@ -116,7 +118,7 @@ export const loginUtils = async (data) => {
       message: "Login successful",
       data: {
         userId: user._id,
-        orgId: user.organizationId,
+        orgId: user.orgId,
       },
       accessToken,
       refreshToken,

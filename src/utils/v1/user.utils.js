@@ -2,7 +2,7 @@ import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
 
 // Generate random password
-const generateRandomPassword = () => {
+export const generateRandomPassword = () => {
   const length = 12;
   const charset =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
@@ -10,29 +10,24 @@ const generateRandomPassword = () => {
   for (let i = 0; i < length; i++) {
     password += charset.charAt(Math.floor(Math.random() * charset.length));
   }
+  console.log({ password });
+
   return password;
 };
 
 export const createUserUtils = async (data) => {
   try {
     await connectDB();
-    const { name, email, role } = data;
 
-    // Generate random password
-    const password = generateRandomPassword();
+    const user = await User.create(data);
 
-    const user = await User.create({
-      name,
-      email,
-      password,
-      // organizationId,
-      role: role || { name: "user", permission: {} },
-    });
     return {
       statusCode: 201,
-      user,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
       message: "User Created Successfully",
-      // password, // Return password to be sent to user (should be via email)
     };
   } catch (error) {
     return {
@@ -43,20 +38,117 @@ export const createUserUtils = async (data) => {
   }
 };
 
-export const getUserUtils = async (data) => {
+export const getOrgUsersUtils = async (
+  orgId,
+  search = null,
+  // isActive = true,
+  page = 1,
+  limit = 10,
+) => {
   try {
-    const users = await User.find({ isActive: true })
-      .select("-password")
-      .populate("organizationId", "name");
+    await connectDB();
+    const users = await User.find({ orgId });
+    console.log(users, "users");
+
     return {
       statusCode: 200,
       message: "Data fetch successfully",
-      users,
+      users: users.map((user) => {
+        return {
+          name: user.name,
+          userId: user._id,
+          orgId: user.orgId,
+          email: user.email,
+        };
+      }),
     };
   } catch (error) {
     return {
       statusCode: 500,
       message: "Internal Server error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const getOrgUserById = async (id) => {
+  try {
+    await connectDB();
+    const user = await User.findById(id);
+    if (!user) {
+      return {
+        statusCode: 404,
+        message: "User not found",
+      };
+    }
+    return {
+      statusCode: 200,
+      message: "User fetch successfully",
+      user: {
+        name: user.name,
+        userId: user._id,
+        orgid: user.orgId,
+        email: user.email,
+      },
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      message: "Internal Server error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const updateUserbyId = async ({ id, updates }) => {
+  try {
+    await connectDB();
+
+    const user = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return {
+        statusCode: 404,
+        message: "User not found",
+      };
+    }
+
+    return {
+      statusCode: 200,
+      message: "User updated Successfully",
+      user: {
+        name: user.name,
+        userId: user._id,
+        orgid: user.orgId,
+        email: user.email,
+      },
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const deleteUserbyId = async (id) => {
+  try {
+    await connectDB();
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return { statusCode: 404, message: "User not found" };
+    }
+    return {
+      statusCode: 200,
+      message: "User deleted successfully",
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
       errors: [error?.message?.replaceAll('"')],
     };
   }

@@ -19,7 +19,7 @@ export const orgUserValidation = {
     type: "object",
     allowEmptyObject: false,
     objectAttr: {
-      organizationId: { type: "string" },
+      orgId: { type: "string" },
       name: {
         mandatory: true,
         type: "string",
@@ -47,7 +47,7 @@ export const userLoginValidation = {
 };
 
 export const adduserValidation = {
-  organizationId: { type: "string" },
+  orgId: { type: "string" },
   name: {
     mandatory: true,
     type: "string",
@@ -58,6 +58,7 @@ export const adduserValidation = {
     type: "email",
   },
   password: {
+    type: "string",
     // mandatory: true,
     // regex:
     //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,

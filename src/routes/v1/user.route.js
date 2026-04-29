@@ -1,7 +1,10 @@
 import express from "express";
 import {
   createUserController,
+  deleteUserController,
+  getUserByIdController,
   getUserController,
+  updateUserController,
 } from "../../controllers/v1/user.controller.js";
 import { authJwtToken, authorize } from "../../middleware/auth.js";
 import { adduserValidation } from "../../utils/v1/validator.json.js";
@@ -17,5 +20,9 @@ userRouter.post(
 );
 
 userRouter.get("/", authJwtToken, getUserController);
+userRouter.get("/:id", authJwtToken, getUserByIdController);
+userRouter.patch("/:id", authJwtToken, updateUserController);
+
+userRouter.delete("/:id", authJwtToken, deleteUserController);
 
 export default userRouter;

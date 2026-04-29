@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    organizationId: {
+    orgId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
       // required: true,
@@ -64,13 +64,12 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
   }
 });
 
 userSchema.methods.comparePassword = async function (plainPassword) {
-  let comparePasswrd = await bcrypt.compare(plainPassword, this.password);
-  return comparePasswrd;
+  return await bcrypt.compare(plainPassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);
