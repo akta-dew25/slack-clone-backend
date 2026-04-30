@@ -1,18 +1,15 @@
 import mongoose from "mongoose";
 // import 'dotenv/config'
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-
-dotenv.config()
+dotenv.config();
 
 const MONGODB_URI = process.env.MONGO_URI;
 const MONGODB_NAME = process.env.MONGO_NAME;
 
-
-
 let cachedDb = null;
 
- const connectDB = async () => {
+const connectDB = async () => {
   if (cachedDb) {
     console.log("Using cached MongoDB connection");
     return cachedDb;
@@ -31,4 +28,4 @@ let cachedDb = null;
   }
 };
 
-export default connectDB
+export default connectDB;
