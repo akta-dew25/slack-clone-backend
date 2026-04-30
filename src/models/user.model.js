@@ -51,16 +51,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    // refreshToken: {
-    //   type: String,
-    //   default: null,
-    // },
   },
   { timestamps: true },
 );
-
-// Index (important for login)
-// userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {

@@ -5,6 +5,8 @@ export const authRegisterController = async (req, res) => {
     const { statusCode, ...response } = await authRegisterUtils(req.body);
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
+
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],
@@ -17,6 +19,8 @@ export const authLoginController = async (req, res) => {
     const { statusCode, ...response } = await loginUtils(req.body);
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
+
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],

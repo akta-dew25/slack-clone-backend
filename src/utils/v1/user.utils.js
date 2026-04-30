@@ -10,7 +10,6 @@ export const generateRandomPassword = () => {
   for (let i = 0; i < length; i++) {
     password += charset.charAt(Math.floor(Math.random() * charset.length));
   }
-  console.log({ password });
 
   return password;
 };
@@ -30,6 +29,7 @@ export const createUserUtils = async (data) => {
       message: "User Created Successfully",
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server Error",
@@ -48,8 +48,6 @@ export const getOrgUsersUtils = async (
   try {
     await connectDB();
     const users = await User.find({ orgId });
-    console.log(users, "users");
-
     return {
       statusCode: 200,
       message: "Data fetch successfully",
@@ -63,6 +61,7 @@ export const getOrgUsersUtils = async (
       }),
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server error",
@@ -92,6 +91,7 @@ export const getOrgUserById = async (id) => {
       },
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server error",
@@ -126,6 +126,7 @@ export const updateUserbyId = async ({ id, updates }) => {
       },
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server Error",
@@ -146,6 +147,7 @@ export const deleteUserbyId = async (id) => {
       message: "User deleted successfully",
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server Error",

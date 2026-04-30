@@ -18,6 +18,7 @@ export const createUserController = async (req, res) => {
     });
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],
@@ -30,6 +31,7 @@ export const getUserController = async (req, res) => {
     const { statusCode, ...response } = await getOrgUsersUtils(req.user.orgId);
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],
@@ -42,6 +44,7 @@ export const getUserByIdController = async (req, res) => {
     const { statusCode, ...response } = await getOrgUserById(req.params.id);
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],
@@ -57,6 +60,7 @@ export const updateUserController = async (req, res) => {
     });
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],
@@ -69,6 +73,7 @@ export const deleteUserController = async (req, res) => {
     const { statusCode, ...response } = await deleteUserbyId(req.params.id);
     res.status(statusCode).json(response);
   } catch (error) {
+    console.log({ error });
     res.status(500).json({
       message: "Internal Server Error",
       error: [error.message.replaceAll('"')],

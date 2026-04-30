@@ -61,6 +61,7 @@ export const authRegisterUtils = async (data) => {
       };
     }
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server Error",
@@ -75,7 +76,6 @@ export const loginUtils = async (data) => {
     const { email, password } = data;
 
     // findone. = first object condition,second object same ,
-    console.log({ data });
     const user = await User.findOne(
       { email },
       { _id: 1, orgId: 1, password: 1, role: 1 },
@@ -124,6 +124,7 @@ export const loginUtils = async (data) => {
       refreshToken,
     };
   } catch (error) {
+    console.log({ error });
     return {
       statusCode: 500,
       message: "Internal Server Error",

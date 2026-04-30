@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const authJwtToken = (req, res, next) => {
+export const authorizeUser = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
