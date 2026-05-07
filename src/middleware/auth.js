@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-export const protect = (req, res, next) => {
+export const authorizeUser = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -17,4 +17,16 @@ export const protect = (req, res, next) => {
   } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }
+};
+
+export const authorize = (...allowedRoles) => {
+  return (req, res, next) => {
+    // if (!req.user) {
+    //   return res.status(401).json({ message: "User not authenticated" });
+    // }
+    // if (!allowedRoles.includes(req.user.role)) {
+    //   return res.status(403).json({ message: "Insufficient permission" });
+    // }
+    next();
+  };
 };

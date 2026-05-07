@@ -3,10 +3,10 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    organizationId: {
+    orgId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      required: true,
+      // required: true,
     },
 
     name: {
@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
+    },
+    role: {
+      type: Object,
+      // required: true,
     },
 
     avatar: {
@@ -47,16 +51,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
   },
   { timestamps: true },
 );
-
-// Index (important for login)
-// userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre("save", async function () {
   if (this.isModified("password")) {
@@ -64,8 +61,8 @@ userSchema.pre("save", async function () {
   }
 });
 
-userSchema.methods.comparePassword = function (plainPassword) {
-  return bcrypt.compare(plainPassword, this.password);
+userSchema.methods.comparePassword = async function (plainPassword) {
+  return await bcrypt.compare(plainPassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);
