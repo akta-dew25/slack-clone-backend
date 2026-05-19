@@ -40,6 +40,7 @@ export const createUserUtils = async (data) => {
 
 export const getOrgUsersUtils = async (
   orgId,
+  userIds,
   search = null,
   // isActive = true,
   page = 1,
@@ -130,6 +131,52 @@ export const updateUserbyId = async ({ id, updates }) => {
     return {
       statusCode: 500,
       message: "Internal Server Error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const getUsersByIds = async (orgId, userIds) => {
+  try {
+    await connectDB();
+
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return {
+        statusCode: 400,
+        message: "Invalid userIds array",
+      };
+    }
+
+    const users = await User.find({
+      _id: { $in: userIds },
+      orgId: orgId,
+    });
+
+    if (users.length === 0) {
+      return {
+        statusCode: 404,
+        message: "No users found",
+        users: [],
+      };
+    }
+
+    return {
+      statusCode: 200,
+      message: "Users fetched successfully",
+      users: users.map((user) => {
+        return {
+          name: user.name,
+          userId: user._id,
+          orgId: user.orgId,
+          email: user.email,
+        };
+      }),
+    };
+  } catch (error) {
+    console.log({ error });
+    return {
+      statusCode: 500,
+      message: "Internal Server error",
       errors: [error?.message?.replaceAll('"')],
     };
   }

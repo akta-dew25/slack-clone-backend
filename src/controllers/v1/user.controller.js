@@ -5,6 +5,7 @@ import {
   getOrgUserById,
   getOrgUsersUtils,
   updateUserbyId,
+  getUsersByIds,
 } from "../../utils/v1/user.utils.js";
 
 export const createUserController = async (req, res) => {
@@ -29,6 +30,7 @@ export const createUserController = async (req, res) => {
 export const getUserController = async (req, res) => {
   try {
     const { statusCode, ...response } = await getOrgUsersUtils(req.user.orgId);
+
     res.status(statusCode).json(response);
   } catch (error) {
     console.log({ error });
@@ -71,6 +73,23 @@ export const updateUserController = async (req, res) => {
 export const deleteUserController = async (req, res) => {
   try {
     const { statusCode, ...response } = await deleteUserbyId(req.params.id);
+    res.status(statusCode).json(response);
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: [error.message.replaceAll('"')],
+    });
+  }
+};
+
+export const getUsersByIdsController = async (req, res) => {
+  try {
+    const { userIds } = req.body;
+    const { statusCode, ...response } = await getUsersByIds(
+      req.user.orgId,
+      userIds,
+    );
     res.status(statusCode).json(response);
   } catch (error) {
     console.log({ error });
