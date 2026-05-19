@@ -78,7 +78,7 @@ export const loginUtils = async (data) => {
     // findone. = first object condition,second object same ,
     const user = await User.findOne(
       { email },
-      { _id: 1, orgId: 1, password: 1, role: 1 },
+      { _id: 1, orgId: 1, password: 1, role: 1, name: 1 },
     );
     if (!user) {
       return {
@@ -97,13 +97,24 @@ export const loginUtils = async (data) => {
     }
 
     // generate token
+
     const accessToken = generateAccessToken(
-      { userId: user._id, orgId: user.orgId, role: user.role },
+      {
+        userId: user._id,
+        orgId: user.orgId,
+        userName: user.name,
+        role: user.role,
+      },
       process.env.ACCESS_TOKEN_SECRET,
       "1h",
     );
     const refreshToken = generateRefreshToken(
-      { userId: user._id, orgId: user.orgId, role: user.role },
+      {
+        userId: user._id,
+        orgId: user.orgId,
+        role: user.role,
+        userName: user.name,
+      },
       process.env.REFRESH_TOKEN_SECRET,
       "7d",
     );
