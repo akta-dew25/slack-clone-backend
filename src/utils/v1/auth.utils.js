@@ -43,6 +43,7 @@ export const authRegisterUtils = async (data) => {
             name: _user.name,
             email: _user.email,
             orgId: _user.orgId,
+            userId: _user._id,
           },
         };
       } else {
@@ -78,7 +79,7 @@ export const loginUtils = async (data) => {
     // findone. = first object condition,second object same ,
     const user = await User.findOne(
       { email },
-      { _id: 1, orgId: 1, password: 1, role: 1 },
+      { _id: 1, orgId: 1, password: 1, role: 1, name: 1 },
     );
     if (!user) {
       return {
@@ -97,13 +98,24 @@ export const loginUtils = async (data) => {
     }
 
     // generate token
+
     const accessToken = generateAccessToken(
-      { userId: user._id, orgId: user.orgId, role: user.role },
+      {
+        userId: user._id,
+        orgId: user.orgId,
+        userName: user.name,
+        role: user.role,
+      },
       process.env.ACCESS_TOKEN_SECRET,
       "1h",
     );
     const refreshToken = generateRefreshToken(
-      { userId: user._id, orgId: user.orgId, role: user.role },
+      {
+        userId: user._id,
+        orgId: user.orgId,
+        role: user.role,
+        userName: user.name,
+      },
       process.env.REFRESH_TOKEN_SECRET,
       "7d",
     );
@@ -122,6 +134,37 @@ export const loginUtils = async (data) => {
       },
       accessToken,
       refreshToken,
+    };
+  } catch (error) {
+    console.log({ error });
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const forgotPasswordUtils = async (data) => {
+  try {
+    await connectDB();
+    const { email, password } = data;
+
+    if (!email || !password) {
+      return { statusCode: 400, message: "Email and password are required" };
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return { statusCode: 404, message: "User not found" };
+    }
+
+    user.password = password;
+    await user.save();
+
+    return {
+      statusCode: 200,
+      message: "Password updated successfully",
     };
   } catch (error) {
     console.log({ error });

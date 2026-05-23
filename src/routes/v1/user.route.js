@@ -5,6 +5,7 @@ import {
   getUserByIdController,
   getUserController,
   updateUserController,
+  getUsersByIdsController,
 } from "../../controllers/v1/user.controller.js";
 import { adduserValidation } from "../../utils/v1/validator.json.js";
 import { validatePayload } from "../../middleware/validator.js";
@@ -18,8 +19,9 @@ userRouter.post(
 );
 
 userRouter.get("/", getUserController);
+userRouter.post("/", getUsersByIdsController);
 userRouter.get("/:id", getUserByIdController);
-userRouter.patch("/:id", updateUserController);
+userRouter.put("/:id", updateUserController);
 
 userRouter.delete("/:id", deleteUserController);
 

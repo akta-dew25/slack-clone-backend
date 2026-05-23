@@ -41,16 +41,21 @@ const userSchema = new mongoose.Schema(
       enum: ["online", "offline", "away"],
       default: "offline",
     },
+    isActive: {
+      type: String,
+      // enum: ["Active", "Invited", "Blocked"],
+      default: null,
+    },
 
     lastSeen: {
       type: Date,
       default: Date.now,
     },
 
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    // isActive: {
+    //   type: Boolean,
+    //   default: true,
+    // },
   },
   { timestamps: true },
 );

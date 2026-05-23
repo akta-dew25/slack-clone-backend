@@ -1,4 +1,8 @@
-import { authRegisterUtils, loginUtils } from "../../utils/v1/auth.utils.js";
+import {
+  authRegisterUtils,
+  loginUtils,
+  forgotPasswordUtils,
+} from "../../utils/v1/auth.utils.js";
 
 export const authRegisterController = async (req, res) => {
   try {
@@ -17,6 +21,20 @@ export const authRegisterController = async (req, res) => {
 export const authLoginController = async (req, res) => {
   try {
     const { statusCode, ...response } = await loginUtils(req.body);
+    res.status(statusCode).json(response);
+  } catch (error) {
+    console.log({ error });
+
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: [error.message.replaceAll('"')],
+    });
+  }
+};
+
+export const authForgotPasswordController = async (req, res) => {
+  try {
+    const { statusCode, ...response } = await forgotPasswordUtils(req.body);
     res.status(statusCode).json(response);
   } catch (error) {
     console.log({ error });
