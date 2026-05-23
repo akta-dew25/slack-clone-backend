@@ -25,6 +25,11 @@ export const createUserUtils = async (data) => {
       user: {
         name: user.name,
         email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        userId: user._id,
+
+        Joined: user.createdAt,
       },
       message: "User Created Successfully",
     };
@@ -58,6 +63,9 @@ export const getOrgUsersUtils = async (
           userId: user._id,
           orgId: user.orgId,
           email: user.email,
+          role: user.role.name,
+          isActive: user.isActive,
+          Joined: user.createdAt,
         };
       }),
     };
@@ -89,6 +97,9 @@ export const getOrgUserById = async (id) => {
         userId: user._id,
         orgid: user.orgId,
         email: user.email,
+        role: user.role.name,
+        isActive: user.isActive,
+        Joined: user.createdAt,
       },
     };
   } catch (error) {
@@ -124,6 +135,9 @@ export const updateUserbyId = async ({ id, updates }) => {
         userId: user._id,
         orgid: user.orgId,
         email: user.email,
+        role: user.role.name,
+        isActive: user.isActive,
+        Joined: user.createdAt,
       },
     };
   } catch (error) {
@@ -169,6 +183,9 @@ export const getUsersByIds = async (orgId, userIds) => {
           userId: user._id,
           orgId: user.orgId,
           email: user.email,
+          role: user.role.name,
+          isActive: user.isActive,
+          Joined: user.createdAt,
         };
       }),
     };

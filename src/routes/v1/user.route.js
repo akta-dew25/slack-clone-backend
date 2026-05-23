@@ -21,7 +21,7 @@ userRouter.post(
 userRouter.get("/", getUserController);
 userRouter.post("/", getUsersByIdsController);
 userRouter.get("/:id", getUserByIdController);
-userRouter.patch("/:id", updateUserController);
+userRouter.put("/:id", updateUserController);
 
 userRouter.delete("/:id", deleteUserController);
 

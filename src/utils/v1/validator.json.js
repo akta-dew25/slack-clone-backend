@@ -46,6 +46,15 @@ export const userLoginValidation = {
   },
 };
 
+export const forgotPasswordValidation = {
+  email: { mandatory: true, type: "email" },
+  password: {
+    mandatory: true,
+    regex:
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  },
+};
+
 export const adduserValidation = {
   orgId: { type: "string" },
   name: {
@@ -62,5 +71,13 @@ export const adduserValidation = {
     // mandatory: true,
     // regex:
     //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+  },
+  role: {
+    mandatory: true,
+    type: "string",
+  },
+  isActive: {
+    mandatory: true,
+    type: "string",
   },
 };

@@ -43,6 +43,7 @@ export const authRegisterUtils = async (data) => {
             name: _user.name,
             email: _user.email,
             orgId: _user.orgId,
+            userId: _user._id,
           },
         };
       } else {
@@ -133,6 +134,37 @@ export const loginUtils = async (data) => {
       },
       accessToken,
       refreshToken,
+    };
+  } catch (error) {
+    console.log({ error });
+    return {
+      statusCode: 500,
+      message: "Internal Server Error",
+      errors: [error?.message?.replaceAll('"')],
+    };
+  }
+};
+
+export const forgotPasswordUtils = async (data) => {
+  try {
+    await connectDB();
+    const { email, password } = data;
+
+    if (!email || !password) {
+      return { statusCode: 400, message: "Email and password are required" };
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return { statusCode: 404, message: "User not found" };
+    }
+
+    user.password = password;
+    await user.save();
+
+    return {
+      statusCode: 200,
+      message: "Password updated successfully",
     };
   } catch (error) {
     console.log({ error });

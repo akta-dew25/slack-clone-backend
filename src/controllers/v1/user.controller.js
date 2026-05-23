@@ -14,7 +14,7 @@ export const createUserController = async (req, res) => {
     const { statusCode, ...response } = await createUserUtils({
       ...req.body,
       password,
-      role: { name: "user", permission: {} },
+      // role: { name: "user", permission: {} },
       orgId: req.user.orgId,
     });
     res.status(statusCode).json(response);
