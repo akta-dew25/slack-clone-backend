@@ -19,7 +19,7 @@ userRouter.post(
 );
 
 userRouter.get("/", getUserController);
-userRouter.post("/", getUsersByIdsController);
+userRouter.post("/userdetails", getUsersByIdsController);
 userRouter.get("/:id", getUserByIdController);
 userRouter.put("/:id", updateUserController);
 

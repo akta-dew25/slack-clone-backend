@@ -31,6 +31,7 @@ export const createUserUtils = async (data) => {
 
         Joined: user.createdAt,
       },
+
       message: "User Created Successfully",
     };
   } catch (error) {
@@ -63,7 +64,7 @@ export const getOrgUsersUtils = async (
           userId: user._id,
           orgId: user.orgId,
           email: user.email,
-          role: user.role.name,
+          role: user.role.name || user.role,
           isActive: user.isActive,
           Joined: user.createdAt,
         };
