@@ -43,13 +43,13 @@ const userSchema = new mongoose.Schema(
     },
     isActive: {
       type: String,
-      // enum: ["Active", "Invited", "Blocked"],
+      enum: ["Active", "Invited", "Blocked"],
       default: null,
     },
-    isPasswordChanged: {
-      type: Boolean,
-      default: false,
-    },
+    // isPasswordChanged: {
+    //   type: Boolean,
+    //   default: false,
+    // },
 
     lastSeen: {
       type: Date,

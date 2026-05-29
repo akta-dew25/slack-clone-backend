@@ -4,11 +4,14 @@ import {
   orgUserValidation,
   userLoginValidation,
   forgotPasswordValidation,
+  changePasswordValidation,
 } from "../../utils/v1/validator.json.js";
 import {
   authLoginController,
   authRegisterController,
   authForgotPasswordController,
+  authChangePasswordController,
+  refreshTokenController,
 } from "../../controllers/v1/auth.controller.js";
 
 const authRouter = express.Router();
@@ -30,5 +33,13 @@ authRouter.post(
   validatePayload({ rule: forgotPasswordValidation }),
   authForgotPasswordController,
 );
+
+authRouter.post(
+  "/change-password",
+  validatePayload({ rule: changePasswordValidation }),
+  authChangePasswordController,
+);
+
+authRouter.post("/refresh-token", refreshTokenController);
 
 export default authRouter;

@@ -81,3 +81,16 @@ export const adduserValidation = {
     type: "string",
   },
 };
+export const changePasswordValidation = {
+  currentPassword: {
+    required: true,
+    type: "string",
+    minLength: 6,
+  },
+
+  newPassword: {
+    required: true,
+    type: "string",
+    minLength: 6,
+  },
+};

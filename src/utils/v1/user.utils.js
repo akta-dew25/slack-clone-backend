@@ -1,3 +1,4 @@
+import axios from "axios";
 import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
 
@@ -19,18 +20,29 @@ export const createUserUtils = async (data) => {
     await connectDB();
 
     const user = await User.create(data);
+    const notify = await axios.post(
+      "http://localhost:9000/api/v1/notifications/send-invite",
+      {
+        name: user.name,
+        email: user.email,
+        password: data.password,
+        organization: "DevCrew",
+      },
+    );
+    console.log({ notify });
 
     return {
       statusCode: 201,
       user: {
         name: user.name,
         email: user.email,
-        role: user.role,
+        // role: user.role,
         isActive: user.isActive,
         userId: user._id,
 
         Joined: user.createdAt,
       },
+      emailMsg: notify.data.message,
 
       message: "User Created Successfully",
     };
