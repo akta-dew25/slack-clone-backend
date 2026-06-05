@@ -3,7 +3,7 @@ import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
 import { generateAccessToken, generateRefreshToken } from "./token.js";
 import { createUserUtils } from "./user.utils.js";
-import bcrypt from "bcryptjs";
+import { redisKeys, setCache } from "./cache.js";
 
 export const authRegisterUtils = async (data) => {
   try {
@@ -124,6 +124,11 @@ export const loginUtils = async (data) => {
     );
     // save refresh token in db
     user.refreshToken = refreshToken;
+    await setCache(
+      redisKeys.refreshToken(user._id),
+      refreshToken,
+      7 * 24 * 60 * 60,
+    );
     await user.save();
 
     //  user login
@@ -247,9 +252,9 @@ export const refreshTokenUtils = async ({ refreshToken }) => {
         message: "User not found",
       };
     }
-    console.log({ user });
+    const storedToken = await getCache(redisKeys.refreshToken(decoded.userId));
 
-    if (user.refreshToken !== refreshToken) {
+    if (!storedToken || storedToken !== refreshToken) {
       return {
         statusCode: 401,
         message: "Invalid refresh token",
