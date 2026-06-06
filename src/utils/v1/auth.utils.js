@@ -4,6 +4,7 @@ import User from "../../models/user.model.js";
 import { generateAccessToken, generateRefreshToken } from "./token.js";
 import { createUserUtils } from "./user.utils.js";
 import { redisKeys, setCache } from "./cache.js";
+import { ROLES } from "../../constants/roles.js";
 
 export const authRegisterUtils = async (data) => {
   try {
@@ -31,7 +32,7 @@ export const authRegisterUtils = async (data) => {
         user: _user,
       } = await createUserUtils({
         ...user,
-        role: { name: "Admin", permissions: "*" },
+        role: ROLES.ADMIN,
         orgId: organization._id,
         // isPasswordChanged: true,
         isActive: "Active",
@@ -214,7 +215,6 @@ export const changePasswordUtils = async ({
     user.isActive = "Active";
 
     await user.save();
-    console.log({ user });
 
     return {
       statusCode: 200,

@@ -2,6 +2,7 @@ import axios from "axios";
 import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
 import { deleteCache, getCache, redisKeys, setCache } from "./cache.js";
+import { ROLES } from "../../constants/roles.js";
 
 // Generate random password
 export const generateRandomPassword = () => {
@@ -20,7 +21,7 @@ export const createUserUtils = async (data) => {
   try {
     await connectDB();
 
-    const user = await User.create(data);
+    const user = await User.create({ ...data, role: data.role || ROLES.USER });
     await deleteCache(redisKeys.orgUsers(user.orgId));
     const notify = await axios.post(
       "http://localhost:9000/api/v1/notifications/send-invite",
@@ -207,8 +208,6 @@ export const getUsersByIds = async (orgId, userIds) => {
     const cachedUsers = await getCache(cacheKey);
 
     if (cachedUsers) {
-      console.log("✅ USERS FROM REDIS");
-
       return {
         statusCode: 200,
         message: "Users fetched successfully",
