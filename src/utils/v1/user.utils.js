@@ -1,5 +1,8 @@
+import axios from "axios";
 import connectDB from "../../config/db.js";
 import User from "../../models/user.model.js";
+import { deleteCache, getCache, redisKeys, setCache } from "./cache.js";
+import { ROLES } from "../../constants/roles.js";
 
 // Generate random password
 export const generateRandomPassword = () => {
@@ -18,19 +21,31 @@ export const createUserUtils = async (data) => {
   try {
     await connectDB();
 
-    const user = await User.create(data);
+    const user = await User.create({ ...data, role: data.role || ROLES.USER });
+    await deleteCache(redisKeys.orgUsers(user.orgId));
+    const notify = await axios.post(
+      "http://localhost:9000/api/v1/notifications/send-invite",
+      {
+        name: user.name,
+        email: user.email,
+        password: data.password,
+        organization: "DevCrew",
+      },
+    );
 
     return {
       statusCode: 201,
       user: {
         name: user.name,
         email: user.email,
-        role: user.role,
+        // role: user.role,
         isActive: user.isActive,
         userId: user._id,
 
         Joined: user.createdAt,
       },
+      emailMsg: notify.data.message,
+
       message: "User Created Successfully",
     };
   } catch (error) {
@@ -53,21 +68,33 @@ export const getOrgUsersUtils = async (
 ) => {
   try {
     await connectDB();
+    const cacheKey = redisKeys.orgUsers(orgId);
+    const cachedUsers = await getCache(cacheKey);
+    if (cachedUsers) {
+      return {
+        statusCode: 200,
+        message: "Users fetched from cache",
+        users: cachedUsers,
+      };
+    }
     const users = await User.find({ orgId });
+
+    const formattedUsers = users.map((user) => ({
+      name: user.name,
+      userId: user._id,
+      orgId: user.orgId,
+      email: user.email,
+      role: user.role.name || user.role,
+      isActive: user.isActive,
+      Joined: user.createdAt,
+    }));
+
+    await setCache(cacheKey, formattedUsers, 300);
+
     return {
       statusCode: 200,
       message: "Data fetch successfully",
-      users: users.map((user) => {
-        return {
-          name: user.name,
-          userId: user._id,
-          orgId: user.orgId,
-          email: user.email,
-          role: user.role.name,
-          isActive: user.isActive,
-          Joined: user.createdAt,
-        };
-      }),
+      users: formattedUsers,
     };
   } catch (error) {
     console.log({ error });
@@ -82,6 +109,15 @@ export const getOrgUsersUtils = async (
 export const getOrgUserById = async (id) => {
   try {
     await connectDB();
+    const cacheKey = redisKeys.userById(id);
+    const cachedUser = await getCache(cacheKey);
+
+    if (cachedUser) {
+      return {
+        statusCode: 200,
+        user: cachedUser,
+      };
+    }
     const user = await User.findById(id);
     if (!user) {
       return {
@@ -89,18 +125,22 @@ export const getOrgUserById = async (id) => {
         message: "User not found",
       };
     }
+    const userData = {
+      name: user.name,
+      userId: user._id,
+      orgid: user.orgId,
+      email: user.email,
+      role: user.role.name,
+      isActive: user.isActive,
+      Joined: user.createdAt,
+    };
+
+    await setCache(cacheKey, userData, 300);
+
     return {
       statusCode: 200,
       message: "User fetch successfully",
-      user: {
-        name: user.name,
-        userId: user._id,
-        orgid: user.orgId,
-        email: user.email,
-        role: user.role.name,
-        isActive: user.isActive,
-        Joined: user.createdAt,
-      },
+      user: userData,
     };
   } catch (error) {
     console.log({ error });
@@ -120,6 +160,10 @@ export const updateUserbyId = async ({ id, updates }) => {
       new: true,
       runValidators: true,
     });
+
+    await deleteCache(redisKeys.userById(id));
+    await deleteCache(redisKeys.orgUsers(user.orgId));
+
     if (!user) {
       return {
         statusCode: 404,
@@ -160,6 +204,16 @@ export const getUsersByIds = async (orgId, userIds) => {
         message: "Invalid userIds array",
       };
     }
+    const cacheKey = redisKeys.usersByIds(orgId, userIds);
+    const cachedUsers = await getCache(cacheKey);
+
+    if (cachedUsers) {
+      return {
+        statusCode: 200,
+        message: "Users fetched successfully",
+        users: cachedUsers,
+      };
+    }
 
     const users = await User.find({
       _id: { $in: userIds },
@@ -174,20 +228,21 @@ export const getUsersByIds = async (orgId, userIds) => {
       };
     }
 
+    const formattedUsers = users.map((user) => ({
+      name: user.name,
+      userId: user._id,
+      orgId: user.orgId,
+      email: user.email,
+      role: user.role.name,
+      isActive: user.isActive,
+      Joined: user.createdAt,
+    }));
+    await setCache(cacheKey, formattedUsers, 300);
+
     return {
       statusCode: 200,
       message: "Users fetched successfully",
-      users: users.map((user) => {
-        return {
-          name: user.name,
-          userId: user._id,
-          orgId: user.orgId,
-          email: user.email,
-          role: user.role.name,
-          isActive: user.isActive,
-          Joined: user.createdAt,
-        };
-      }),
+      users: formattedUsers,
     };
   } catch (error) {
     console.log({ error });
@@ -203,6 +258,11 @@ export const deleteUserbyId = async (id) => {
   try {
     await connectDB();
     const user = await User.findByIdAndDelete(id);
+
+    if (user) {
+      await deleteCache(redisKeys.userById(id));
+      await deleteCache(redisKeys.orgUsers(user.orgId));
+    }
     if (!user) {
       return { statusCode: 404, message: "User not found" };
     }
