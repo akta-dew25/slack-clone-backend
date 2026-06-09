@@ -13,7 +13,7 @@ export const authRegisterUtils = async (data) => {
       user,
     } = data;
 
-    const { data: org } = await axios.post(
+    const { data: orgResponse } = await axios.post(
       "http://localhost:5000/api/v1/organization",
       {
         name,
@@ -22,7 +22,7 @@ export const authRegisterUtils = async (data) => {
       },
     );
 
-    const organization = org.org;
+    const organization = orgResponse.org;
 
     if (organization._id) {
       const {

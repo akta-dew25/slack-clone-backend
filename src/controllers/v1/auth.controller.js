@@ -3,11 +3,21 @@ import {
   loginUtils,
   forgotPasswordUtils,
   changePasswordUtils,
+  refreshTokenUtils,
 } from "../../utils/v1/auth.utils.js";
 
 export const authRegisterController = async (req, res) => {
   try {
-    const { statusCode, ...response } = await authRegisterUtils(req.body);
+    // add uploaded logo into org object
+    const logo = req.file ? `${req.file.filename}` : null;
+
+    const { statusCode, ...response } = await authRegisterUtils({
+      org: {
+        ...req.body.org,
+        logo,
+      },
+      user: req.body.user,
+    });
     res.status(statusCode).json(response);
   } catch (error) {
     console.log({ error });

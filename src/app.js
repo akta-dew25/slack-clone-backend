@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/v1", routerV1);
+app.use("/uploads", express.static("uploads"));
 
 app.post("/", () => {});
 
