@@ -4,7 +4,10 @@ export const orgUserValidation = {
     type: "object",
     allowEmptyObject: false,
     objectAttr: {
-      name: { mandatory: true, type: "string" },
+      name: {
+        mandatory: true,
+        type: "string",
+      },
       domain: {
         mandatory: true,
         type: "url",
@@ -19,17 +22,16 @@ export const orgUserValidation = {
     type: "object",
     allowEmptyObject: false,
     objectAttr: {
-      orgId: { type: "string" },
       name: {
         mandatory: true,
         type: "string",
-        // min: 3,
       },
       email: {
         mandatory: true,
         type: "email",
       },
       password: {
+        mandatory: true,
         regex:
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
       },
